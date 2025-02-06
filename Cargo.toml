@@ -1,0 +1,33 @@
+[package]
+name = "kadena-reth"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+reth = { git = "https://github.com/paradigmxyz/reth", rev = "3212af2d85a54eb207661361ac9fe1d7de4b5b8e" }
+reth-ethereum-cli = { git = "https://github.com/paradigmxyz/reth", rev = "3212af2d85a54eb207661361ac9fe1d7de4b5b8e" }
+reth-node-builder = { git = "https://github.com/paradigmxyz/reth", rev = "3212af2d85a54eb207661361ac9fe1d7de4b5b8e" }
+reth-provider = { git = "https://github.com/paradigmxyz/reth", rev = "3212af2d85a54eb207661361ac9fe1d7de4b5b8e" }
+reth-tracing = { git = "https://github.com/paradigmxyz/reth", rev = "3212af2d85a54eb207661361ac9fe1d7de4b5b8e" }
+reth-node-core = { git = "https://github.com/paradigmxyz/reth", rev = "3212af2d85a54eb207661361ac9fe1d7de4b5b8e" }
+reth-node-api = { git = "https://github.com/paradigmxyz/reth", rev = "3212af2d85a54eb207661361ac9fe1d7de4b5b8e" }
+reth-node-ethereum = { git = "https://github.com/paradigmxyz/reth", rev = "3212af2d85a54eb207661361ac9fe1d7de4b5b8e" }
+reth-evm-ethereum = { git = "https://github.com/paradigmxyz/reth", rev = "3212af2d85a54eb207661361ac9fe1d7de4b5b8e" }
+reth-primitives = { git = "https://github.com/paradigmxyz/reth", rev = "3212af2d85a54eb207661361ac9fe1d7de4b5b8e" }
+reth-chainspec = { git = "https://github.com/paradigmxyz/reth", rev = "3212af2d85a54eb207661361ac9fe1d7de4b5b8e" }
+reth-cli-util = { git = "https://github.com/paradigmxyz/reth", rev = "3212af2d85a54eb207661361ac9fe1d7de4b5b8e" }
+reth-evm = { git = "https://github.com/paradigmxyz/reth", rev = "3212af2d85a54eb207661361ac9fe1d7de4b5b8e" }
+alloy-primitives = { version = "0.8.7", default-features = false }
+alloy-genesis = { version = "0.4.2", default-features = false }
+alloy-rpc-client = { version = "0.9" }
+alloy-rpc-types = { version = "0.9" }
+alloy-provider = { version = "0.9" }
+alloy-sol-types = { version = "0.8"}
+reqwest = { version = "0.12.12", features=["blocking"]}
+tracing = "0.1.0"
+tokio = { version = "1", features = ["full"] }
+clap = "4"
+eyre = "0.6"
+sha2 = { version = "0.10", default-features = false }
+serde = { version = "1.0", features = ["derive"]}
+serde_json = "1.0"
