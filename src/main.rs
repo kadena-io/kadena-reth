@@ -3,21 +3,16 @@
 #[global_allocator]
 static ALLOC: reth_cli_util::allocator::Allocator = reth_cli_util::allocator::new_allocator();
 
-
 use clap::{Args, Parser};
-use custom_evm::{KadenaExecutorBuilder, KadenaPayloadBuilder};
+use custom_evm::KadenaExecutorBuilder;
 use reth::cli::Cli;
 use reth_ethereum_cli::chainspec::EthereumChainSpecParser;
-use reth_node_builder::{
-    engine_tree_config::{
-        TreeConfig, DEFAULT_MEMORY_BLOCK_BUFFER_TARGET, DEFAULT_PERSISTENCE_THRESHOLD,
-    },
-    EngineNodeLauncher,
-};
+use reth_node_api::{TreeConfig, DEFAULT_MEMORY_BLOCK_BUFFER_TARGET};
+use reth_node_builder::EngineNodeLauncher;
+use reth_node_core::node_config::DEFAULT_PERSISTENCE_THRESHOLD;
 use reth_node_ethereum::{node::EthereumAddOns, EthereumNode};
-use reth_provider::providers::BlockchainProvider2;
+use reth_provider::providers::BlockchainProvider;
 use reth_tracing::tracing::warn;
-use tracing::info;
 
 pub mod custom_evm;
 pub mod kadena_precompiles;
@@ -69,36 +64,23 @@ fn main() {
                 warn!(target: "reth::cli", "Experimental engine is default now, and the --engine.experimental flag is deprecated. To enable the legacy functionality, use --engine.legacy.");
             }
 
-            let use_legacy_engine = engine_args.legacy;
-            match use_legacy_engine {
-                false => {
-                    let engine_tree_config = TreeConfig::default()
-                        .with_persistence_threshold(engine_args.persistence_threshold)
-                        .with_memory_block_buffer_target(engine_args.memory_block_buffer_target);
-                    let handle = builder
-                        .with_types_and_provider::<EthereumNode, BlockchainProvider2<_>>()
-                        .with_components(
-                            EthereumNode::components()
-                            .executor(KadenaExecutorBuilder::default())
-                            .payload(KadenaPayloadBuilder::default()))
-                        .with_add_ons(EthereumAddOns::default())
-                        .launch_with_fn(|builder| {
-                            let launcher = EngineNodeLauncher::new(
-                                builder.task_executor().clone(),
-                                builder.config().datadir(),
-                                engine_tree_config,
-                            );
-                            builder.launch_with(launcher)
-                        })
-                        .await?;
-                    handle.node_exit_future.await
-                }
-                true => {
-                    info!(target: "reth::cli", "Running with legacy engine");
-                    let handle = builder.launch_node(EthereumNode::default()).await?;
-                    handle.node_exit_future.await
-                }
-            }
+            let launcher = EngineNodeLauncher::new(
+                builder.task_executor().clone(),
+                builder.config().datadir(),
+                TreeConfig::default()
+                    .with_persistence_threshold(engine_args.persistence_threshold)
+                    .with_memory_block_buffer_target(engine_args.memory_block_buffer_target),
+            );
+
+
+            let handle = builder
+              .with_types_and_provider::<EthereumNode, BlockchainProvider<_>>()
+              .with_components(EthereumNode::components().executor(KadenaExecutorBuilder::default()))
+              .with_add_ons(EthereumAddOns::default())
+              .launch_with(launcher)
+              .await.unwrap();
+
+            handle.node_exit_future.await
         })
         {
             eprintln!("Error: {err:?}");
