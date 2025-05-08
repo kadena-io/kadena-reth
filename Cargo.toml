@@ -4,20 +4,21 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-reth = { git = "https://github.com/paradigmxyz/reth", rev = "6f8e7258f4733279080e4bd8345ce50538a40d6e" }
-reth-ethereum-cli = { git = "https://github.com/paradigmxyz/reth", rev = "6f8e7258f4733279080e4bd8345ce50538a40d6e" }
-reth-node-builder = { git = "https://github.com/paradigmxyz/reth", rev = "6f8e7258f4733279080e4bd8345ce50538a40d6e" }
-reth-provider = { git = "https://github.com/paradigmxyz/reth", rev = "6f8e7258f4733279080e4bd8345ce50538a40d6e" }
-reth-tracing = { git = "https://github.com/paradigmxyz/reth", rev = "6f8e7258f4733279080e4bd8345ce50538a40d6e" }
-reth-node-core = { git = "https://github.com/paradigmxyz/reth", rev = "6f8e7258f4733279080e4bd8345ce50538a40d6e" }
-reth-node-api = { git = "https://github.com/paradigmxyz/reth", rev = "6f8e7258f4733279080e4bd8345ce50538a40d6e" }
-reth-node-ethereum = { git = "https://github.com/paradigmxyz/reth", rev = "6f8e7258f4733279080e4bd8345ce50538a40d6e" }
-reth-evm-ethereum = { git = "https://github.com/paradigmxyz/reth", rev = "6f8e7258f4733279080e4bd8345ce50538a40d6e" }
-reth-primitives = { git = "https://github.com/paradigmxyz/reth", rev = "6f8e7258f4733279080e4bd8345ce50538a40d6e" }
-reth-chainspec = { git = "https://github.com/paradigmxyz/reth", rev = "6f8e7258f4733279080e4bd8345ce50538a40d6e" }
-reth-cli-util = { git = "https://github.com/paradigmxyz/reth", rev = "6f8e7258f4733279080e4bd8345ce50538a40d6e" }
-reth-evm = { git = "https://github.com/paradigmxyz/reth", rev = "6f8e7258f4733279080e4bd8345ce50538a40d6e" }
-alloy-primitives = { version = "1.0.0", default-features = false }
+reth = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+reth-ethereum-cli = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+reth-node-builder = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+reth-provider = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+reth-tracing = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+reth-node-core = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+reth-node-api = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+reth-node-ethereum = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+reth-evm-ethereum = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+reth-primitives = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+reth-chainspec = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+reth-cli-util = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+reth-evm = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+alloy-primitives = { version = "1.1.0", default-features = false }
+
 alloy-genesis = { version = "0.14.0", default-features = false }
 alloy-rpc-client = { version = "0.14.0" }
 alloy-rpc-types = { version = "0.14.0" }

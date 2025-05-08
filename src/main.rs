@@ -5,11 +5,10 @@ static ALLOC: reth_cli_util::allocator::Allocator = reth_cli_util::allocator::ne
 
 use clap::Parser;
 use custom_evm::KadenaExecutorBuilder;
-use reth::cli::Cli;
+use reth::{args::RessArgs, cli::Cli};
 use reth_ethereum_cli::chainspec::EthereumChainSpecParser;
 use reth_node_builder::NodeHandle;
 use reth_node_ethereum::{node::EthereumAddOns, EthereumNode};
-use reth_provider::providers::BlockchainProvider;
 use tracing::info;
 
 pub mod custom_evm;
@@ -24,11 +23,13 @@ fn main() {
     }
 
     if let Err(err) =
-        Cli::<EthereumChainSpecParser>::parse().run(|builder, _| async move {
+        Cli::<EthereumChainSpecParser, RessArgs>::parse().run(|builder, _| async move {
             info!(target: "reth::cli", "Launching node");
             let NodeHandle { node_exit_future, node: _ } = builder
-                .with_types_and_provider::<EthereumNode, BlockchainProvider<_>>()
-                .with_components(EthereumNode::components().executor(KadenaExecutorBuilder::default()))
+                .with_types::<EthereumNode>()
+                .with_components(EthereumNode::components()
+                    .executor(KadenaExecutorBuilder::default())
+                )
                 .with_add_ons(EthereumAddOns::default())
                 .launch_with_debug_capabilities()
                 .await?;
