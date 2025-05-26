@@ -1,0 +1,221 @@
+name: Build and Publish Docker Image
+on:
+  push:
+
+env:
+  REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/kadena-reth
+
+jobs:
+  dockerfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Docker file
+        run: |
+          cat > Dockerfile <<'DEOF'
+          ARG DEBIAN_VERSION=bullseye
+
+          # ############################################################################ #
+          # Build Context
+
+          FROM rust:${DEBIAN_VERSION} AS reth-build-ctx
+          ARG TARGETPLATFORM
+          ARG BUILDPLATFORM
+          RUN <<EOF
+            echo "BUILDPLATFORM: $BUILDPLATFORM"
+            echo "TARGETPLATFORM: $TARGETPLATFORM"
+          EOF
+          ENV DEBIAN_FRONTEND=noninteractive
+          RUN <<EOF
+              apt-get update -y
+              apt-get install -yqq \
+                  libclang-dev
+          EOF
+          WORKDIR /app
+          COPY . .
+          ENV GIT_DISCOVERY_ACROSS_FILESYSTEM=1
+          RUN mkdir -p /tools
+          COPY --chmod=0755 <<EOF /tools/check-git-clean.sh
+          #!/bin/sh
+          if [ -d ".git" ] && ! [ -f "/tools/wip" ] && ! git diff --exit-code; then \
+              echo "Git working tree is not clean. The build changed some file that is checked into git." 1>&2 ; \
+              exit 1 ; \
+          fi
+          EOF
+          RUN sh /tools/check-git-clean.sh || touch /tools/wip
+
+          # ############################################################################ #
+          # Build Kadena Reth
+
+          FROM reth-build-ctx AS reth-build
+          ARG BUILD_PROFILE=release
+          ARG RUSTFLAGS=""
+          ARG FEATURES=""
+          ENV BUILD_PROFILE=$BUILD_PROFILE
+          ENV RUSTFLAGS="$RUSTFLAGS"
+          ENV FEATURES=$FEATURES
+          RUN cargo build --profile="$BUILD_PROFILE" --features "$FEATURES" --bin kadena-reth
+          RUN cp /app/target/$BUILD_PROFILE/kadena-reth /app/kadena-reth
+          RUN sh /tools/check-git-clean.sh
+
+          # ############################################################################ #
+          # Runtime Image
+
+          FROM debian:${DEBIAN_VERSION}-slim AS reth-dist
+          ARG TARGETPLATFORM
+          ARG BUILDPLATFORM
+          RUN <<EOF
+            echo "BUILDPLATFORM: $BUILDPLATFORM"
+            echo "TARGETPLATFORM: $TARGETPLATFORM"
+          EOF
+          WORKDIR /app
+          LABEL org.opencontainers.image.source=https://github.com/kadena-io/kadena-reth
+          ENV PATH="/app:${PATH}"
+          COPY --from=reth-build /app/kadena-reth /app/kadena-reth
+          EXPOSE 30303 30303/udp 9001 8545 8546
+          ENTRYPOINT ["/app/kadena-reth"]
+          DEOF
+      - name: Upload dockerfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: dockerfile
+          path: Dockerfile
+          if-no-files-found: error
+          retention-days: 1
+
+  build-amd64:
+    runs-on: ubuntu-24.04
+    needs: [dockerfile]
+    env:
+      PLATFORM: amd64
+    steps:
+      - name: Download dockerfile
+        uses: actions/download-artifact@v4
+        with:
+          name: dockerfile
+          path: ${{ runner.temp }}
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          file: ${{ runner.temp }}/Dockerfile
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ${{ env.REGISTRY_IMAGE }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+          platforms: linux/${{ env.PLATFORM }}
+      - name: Export digest
+        run: |
+          mkdir -p ${{ runner.temp }}/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-linux-${{ env.PLATFORM }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  build-arm64:
+    runs-on: ubuntu-24.04-arm
+    needs: [dockerfile]
+    env:
+      PLATFORM: arm64
+    steps:
+      - name: Download dockerfile
+        uses: actions/download-artifact@v4
+        with:
+          name: dockerfile
+          path: ${{ runner.temp }}
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          file: ${{ runner.temp }}/Dockerfile
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ${{ env.REGISTRY_IMAGE }}
+          labels: ${{ steps.meta.outputs.labels }}
+          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
+          platforms: linux/${{ env.PLATFORM }}
+      - name: Export digest
+        run: |
+          mkdir -p ${{ runner.temp }}/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-linux-${{ env.PLATFORM }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  build-multiarch:
+    runs-on: ubuntu-24.04
+    needs: [build-amd64, build-arm64]
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-*
+          merge-multiple: true
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_IMAGE }}
+          tags: |
+            type=sha
+            type=ref,event=branch
+            type=ref,event=tag
+            type=ref,event=pr
+      - name: Create manifest list and push
+        working-directory: ${{ runner.temp }}/digests
+        run: |
+          docker buildx imagetools create \
+            -t '${{ env.REGISTRY_IMAGE }}:latest' \
+            $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
+            --annotation "index:org.opencontainers.image.description=Kadena version of the Reth EVM execution client." \
+            --annotation "index:org.opencontainers.image.source=https://github.com/kadena-io/kadena-reth" \
+            $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+      - name: Inspect image
+        run: |
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+
