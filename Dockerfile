@@ -2,7 +2,7 @@ ARG UBUNTU_VERSION=22.04
 ARG PROJECT_NAME=kadena-reth
 
 # ############################################################################ #
-# Build Environment
+# Base Environment
 
 FROM ubuntu:${UBUNTU_VERSION} AS reth-base
 ARG TARGETPLATFORM
