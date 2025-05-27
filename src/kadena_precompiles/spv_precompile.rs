@@ -1,9 +1,6 @@
 use alloy_primitives::{address, b256, Address, Bytes, FixedBytes, B256};
 use alloy_sol_types::{sol, SolValue};
-use reth::revm::primitives::{
-    PrecompileError, PrecompileErrors, PrecompileOutput, PrecompileResult,
-};
-use reth::revm::{ContextStatefulPrecompileMut, Database};
+use reth::revm::precompile::{PrecompileError, PrecompileOutput, PrecompileResult, PrecompileWithAddress};
 use reth_tracing::tracing::debug;
 use serde::{Deserialize, Serialize};
 
@@ -11,12 +8,8 @@ pub const BURN_XCHAIN_ADDR: Address = address!("00000000000000000000000000000000
 pub const BURN_XCHAIN_EVENT: FixedBytes<32> =
     b256!("a8a9f5b5396df0df430f98612e808d453d59dff13ad5aed824dce438df3ddcf0");
 
-#[derive(Clone)]
-// Our Burn precompile
-pub struct BurnPrecompile;
+pub const BURN_XCHAIN_PRECOMPILE: PrecompileWithAddress = PrecompileWithAddress (BURN_XCHAIN_ADDR, call_burn);
 
-unsafe impl Sync for BurnPrecompile {}
-unsafe impl Send for BurnPrecompile {}
 
 sol! {
     struct CrosschainOrigin {
@@ -73,53 +66,48 @@ struct XProof {
     algorithm: String,
 }
 
-fn to_precompile_err<T: ToString>(value: T) -> PrecompileErrors {
-    PrecompileErrors::Error(PrecompileError::other(value.to_string()))
+fn to_precompile_err<T: ToString>(value: T) -> PrecompileError {
+    PrecompileError::other(value.to_string())
 }
 
 // Our precompile needs to
 // - Query the sister node for the events from the last 100 blocks from some address
 // - The bytes parameter is going to the be the address of the contract to query the events from
 //
-impl<DB: Database> ContextStatefulPrecompileMut<DB> for BurnPrecompile {
-    fn call_mut(
-        &mut self,
-        bytes: &Bytes,
-        _gas_limit: u64,
-        _evmctx: &mut reth::revm::InnerEvmContext<DB>,
-    ) -> PrecompileResult {
-        let proof_slice = bytes.as_ref();
-        debug!("Proof bytes hex {:?}", bytes);
 
-        let xchain_proof: XProof =
-            serde_json::from_slice(proof_slice).map_err(to_precompile_err)?;
-        debug!("Decoded xchain proof: {:?}", xchain_proof);
+pub fn call_burn(bytes: &Bytes, _gas_limit: u64) -> PrecompileResult {
+    let proof_slice = bytes.as_ref();
+    debug!("Proof bytes hex {:?}", bytes);
 
-        let origin_contract_addr = Address::from_word(xchain_proof.subject.origin.contract);
-        let target_contract_addr = Address::from_word(xchain_proof.subject.target_contract);
-        let target_bytes: Bytes =
-            alloy_primitives::Bytes::abi_decode(&xchain_proof.subject.data.as_ref(), true)
-                .map_err(to_precompile_err)?;
+    let xchain_proof: XProof =
+        serde_json::from_slice(proof_slice).map_err(to_precompile_err)?;
+    debug!("Decoded xchain proof: {:?}", xchain_proof);
 
-        let cx_origin: CrosschainOrigin = CrosschainOrigin {
-            originChainId: xchain_proof.subject.origin.chain_id,
-            originContractAddress: origin_contract_addr,
-            originBlockHeight: xchain_proof.subject.origin.height,
-            originTransactionIndex: xchain_proof.subject.origin.transaction_idx,
-            originEventIndex: xchain_proof.subject.origin.event_idx,
-        };
-        let output = CrosschainMessage {
-            crosschainOperationName: xchain_proof.subject.operation_type,
-            targetChainId: xchain_proof.subject.target_chain_id,
-            targetContractAddress: target_contract_addr,
-            crosschainData: target_bytes,
-            origin: cx_origin,
-        };
-        let encoded = Bytes::from(output.abi_encode());
-        let out = PrecompileOutput::new(1000, encoded);
-        Ok(out)
-    }
+    let origin_contract_addr = Address::from_word(xchain_proof.subject.origin.contract);
+    let target_contract_addr = Address::from_word(xchain_proof.subject.target_contract);
+    let target_bytes: Bytes =
+        alloy_primitives::Bytes::abi_decode(&xchain_proof.subject.data.as_ref())
+            .map_err(to_precompile_err)?;
+
+    let cx_origin: CrosschainOrigin = CrosschainOrigin {
+        originChainId: xchain_proof.subject.origin.chain_id,
+        originContractAddress: origin_contract_addr,
+        originBlockHeight: xchain_proof.subject.origin.height,
+        originTransactionIndex: xchain_proof.subject.origin.transaction_idx,
+        originEventIndex: xchain_proof.subject.origin.event_idx,
+    };
+    let output = CrosschainMessage {
+        crosschainOperationName: xchain_proof.subject.operation_type,
+        targetChainId: xchain_proof.subject.target_chain_id,
+        targetContractAddress: target_contract_addr,
+        crosschainData: target_bytes,
+        origin: cx_origin,
+    };
+    let encoded = Bytes::from(output.abi_encode());
+    let out = PrecompileOutput::new(1000, encoded);
+    Ok(out)
 }
+
 
 #[cfg(test)]
 mod test {
