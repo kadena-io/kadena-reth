@@ -5,9 +5,8 @@ static ALLOC: reth_cli_util::allocator::Allocator = reth_cli_util::allocator::ne
 
 use clap::Parser;
 use custom_evm::KadenaExecutorBuilder;
-use reth::{args::RessArgs, cli::Cli, ress::install_ress_subprotocol};
+use reth::{args::RessArgs, cli::Cli};
 use reth_ethereum_cli::chainspec::EthereumChainSpecParser;
-use reth_node_builder::NodeHandle;
 use reth_node_ethereum::{node::EthereumAddOns, EthereumNode};
 use tracing::info;
 
@@ -23,9 +22,9 @@ fn main() {
     }
 
     if let Err(err) =
-        Cli::<EthereumChainSpecParser, RessArgs>::parse().run(|builder, ress_args| async move {
+        Cli::<EthereumChainSpecParser, RessArgs>::parse().run(|builder, _| async move {
             info!(target: "reth::cli", "Launching node");
-            let NodeHandle { node_exit_future, node } = builder
+            let handle = builder
                 .with_types::<EthereumNode>()
                 .with_components(EthereumNode::components()
                     .executor(KadenaExecutorBuilder::default())
@@ -33,18 +32,8 @@ fn main() {
                 .with_add_ons(EthereumAddOns::default())
                 .launch_with_debug_capabilities()
                 .await?;
-            // Install ress subprotocol.
-            if ress_args.enabled {
-                install_ress_subprotocol(
-                    ress_args,
-                    node.provider,
-                    node.evm_config,
-                    node.network,
-                    node.task_executor,
-                    node.add_ons_handle.engine_events.new_listener(),
-                )?;
-            }
-            node_exit_future.await
+
+            handle.node_exit_future.await
         })
     {
         eprintln!("Error: {err:?}");
