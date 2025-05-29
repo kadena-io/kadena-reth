@@ -34,6 +34,7 @@ reth-tracing = { git = "https://github.com/kadena-io/reth", branch = "kadena-cha
 
 # temporary
 reth-engine-tree = { git = "https://github.com/kadena-io/reth", branch = "kadena-chains" }
+reth-ethereum-payload-builder = { git = "https://github.com/kadena-io/reth", branch = "kadena-chains" }
 
 alloy-primitives = { version = "1.1.0", default-features = false, features = ["map-foldhash"] }
 # alloy-genesis = { version = "1.0.9", default-features = false }
