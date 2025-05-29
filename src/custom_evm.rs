@@ -11,7 +11,7 @@ use reth::revm::{
     MainContext
 };
 use reth_chainspec::ChainSpec;
-use reth_evm::{eth::EthEvmContext, Database, EthEvm, EvmFactory};
+use reth_evm::{eth::EthEvmContext, precompiles::PrecompilesMap, Database, EthEvm, EvmFactory};
 use reth_evm_ethereum::EthEvmConfig;
 use reth_node_api::{FullNodeTypes, NodeTypes};
 use reth_node_builder::{components::ExecutorBuilder, BuilderContext};
@@ -24,12 +24,13 @@ pub struct KadenaEvmFactory;
 
 impl EvmFactory for KadenaEvmFactory {
     type Evm<DB: Database, I: Inspector<EthEvmContext<DB>, EthInterpreter>> =
-        EthEvm<DB, I, KadenaPrecompiles>;
+        EthEvm<DB, I, Self::Precompiles>;
     type Tx = TxEnv;
     type Error<DBError: std::error::Error + Send + Sync + 'static> = EVMError<DBError>;
     type HaltReason = HaltReason;
     type Context<DB: Database> = EthEvmContext<DB>;
     type Spec = SpecId;
+    type Precompiles = PrecompilesMap;
 
     fn create_evm<DB: Database>(
         &self,
@@ -41,10 +42,8 @@ impl EvmFactory for KadenaEvmFactory {
             .with_cfg(input.cfg_env)
             .with_block(input.block_env)
             .build_mainnet_with_inspector(NoOpInspector {})
-            .with_precompiles(KadenaPrecompiles::new());
-
+            .with_precompiles(KadenaPrecompiles::new().precompiles_map());
         EthEvm::new(evm, false)
-
     }
 
     fn create_evm_with_inspector<DB: Database, I: Inspector<Self::Context<DB>, EthInterpreter>>(

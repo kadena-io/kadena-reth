@@ -75,7 +75,7 @@ fn to_precompile_err<T: ToString>(value: T) -> PrecompileError {
 // - The bytes parameter is going to the be the address of the contract to query the events from
 //
 
-pub fn call_burn(bytes: &Bytes, _gas_limit: u64) -> PrecompileResult {
+pub fn call_burn(bytes: &[u8], _gas_limit: u64) -> PrecompileResult {
     let proof_slice = bytes.as_ref();
     debug!("Proof bytes hex {:?}", bytes);
 
