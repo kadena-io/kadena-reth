@@ -115,43 +115,28 @@ impl BlockExecutorFactory for KadenaEvmConfig {
 }
 
 impl ConfigureEvm for KadenaEvmConfig {
-    #[doc = " The primitives type used by the EVM."]
     type Primitives = <EthEvmConfig as ConfigureEvm>::Primitives;
 
-    #[doc = " The error type that is returned by [`Self::next_evm_env`]."]
     type Error = <EthEvmConfig as ConfigureEvm>::Error;
 
-    #[doc = " Context required for configuring next block environment."]
-    #[doc = ""]
-    #[doc = " Contains values that can\'t be derived from the parent block."]
     type NextBlockEnvCtx = <EthEvmConfig as ConfigureEvm>::NextBlockEnvCtx;
 
-    #[doc = " Configured [`BlockExecutorFactory`], contains [`EvmFactory`] internally."]
     type BlockExecutorFactory = Self;
 
-    #[doc = " A type that knows how to build a block."]
     type BlockAssembler = EthBlockAssembler;
 
-    #[doc = " Returns reference to the configured [`BlockExecutorFactory`]."]
     fn block_executor_factory(&self) -> &Self::BlockExecutorFactory {
         self
     }
 
-    #[doc = " Returns reference to the configured [`BlockAssembler`]."]
     fn block_assembler(&self) -> &Self::BlockAssembler {
         self.inner.block_assembler()
     }
 
-    #[doc = " Creates a new [`EvmEnv`] for the given header."]
     fn evm_env(&self, header: &reth_primitives::HeaderTy<Self::Primitives>) -> reth_evm::EvmEnvFor<Self> {
         self.inner.evm_env(header)
     }
 
-    #[doc = " Returns the configured [`EvmEnv`] for `parent + 1` block."]
-    #[doc = ""]
-    #[doc = " This is intended for usage in block building after the merge and requires additional"]
-    #[doc = " attributes that can\'t be derived from the parent block: attributes that are determined by"]
-    #[doc = " the CL, such as the timestamp, suggested fee recipient, and randomness value."]
     fn next_evm_env(
         &self,
         parent: &reth_primitives::HeaderTy<Self::Primitives>,
@@ -160,7 +145,6 @@ impl ConfigureEvm for KadenaEvmConfig {
         self.inner.next_evm_env(parent, attributes)
     }
 
-    #[doc = " Returns the configured [`BlockExecutorFactory::ExecutionCtx`] for a given block."]
     fn context_for_block<'a>(
         &self,
         block: &'a reth_primitives::SealedBlock<reth_primitives::BlockTy<Self::Primitives>>,
@@ -168,8 +152,6 @@ impl ConfigureEvm for KadenaEvmConfig {
         self.inner.context_for_block(block)
     }
 
-    #[doc = " Returns the configured [`BlockExecutorFactory::ExecutionCtx`] for `parent + 1`"]
-    #[doc = " block."]
     fn context_for_next_block(
         &self,
         parent: &reth_primitives::SealedHeader<reth_primitives::HeaderTy<Self::Primitives>>,
