@@ -4,19 +4,29 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-reth = { git = "https://github.com/paradigmxyz/reth", rev = "e95d2b463571d3207ecd63691ab0f7a51266a458" }
-reth-ethereum-cli = { git = "https://github.com/paradigmxyz/reth", rev = "e95d2b463571d3207ecd63691ab0f7a51266a458" }
-reth-node-builder = { git = "https://github.com/paradigmxyz/reth", rev = "e95d2b463571d3207ecd63691ab0f7a51266a458" }
-reth-provider = { git = "https://github.com/paradigmxyz/reth", rev = "e95d2b463571d3207ecd63691ab0f7a51266a458" }
-reth-tracing = { git = "https://github.com/paradigmxyz/reth", rev = "e95d2b463571d3207ecd63691ab0f7a51266a458" }
-reth-node-core = { git = "https://github.com/paradigmxyz/reth", rev = "e95d2b463571d3207ecd63691ab0f7a51266a458" }
-reth-node-api = { git = "https://github.com/paradigmxyz/reth", rev = "e95d2b463571d3207ecd63691ab0f7a51266a458" }
-reth-node-ethereum = { git = "https://github.com/paradigmxyz/reth", rev = "e95d2b463571d3207ecd63691ab0f7a51266a458" }
-reth-evm-ethereum = { git = "https://github.com/paradigmxyz/reth", rev = "e95d2b463571d3207ecd63691ab0f7a51266a458" }
-reth-primitives = { git = "https://github.com/paradigmxyz/reth", rev = "e95d2b463571d3207ecd63691ab0f7a51266a458" }
-reth-chainspec = { git = "https://github.com/paradigmxyz/reth", rev = "e95d2b463571d3207ecd63691ab0f7a51266a458" }
-reth-cli-util = { git = "https://github.com/paradigmxyz/reth", rev = "e95d2b463571d3207ecd63691ab0f7a51266a458" }
-reth-evm = { git = "https://github.com/paradigmxyz/reth", rev = "e95d2b463571d3207ecd63691ab0f7a51266a458" }
+reth = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-chainspec = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-cli-util = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-ethereum = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-ethereum-cli = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-evm = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-evm-ethereum = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-node-api = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-node-builder = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+# reth-node-core = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-node-ethereum = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-primitives = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-provider = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-tracing = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-ethereum-payload-builder = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-basic-payload-builder = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-payload-builder = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+
+# temporary
+reth-engine-tree = { git = "https://github.com/kadena-io/reth", branch = "kadena-chains" }
+reth-ethereum-payload-builder = { git = "https://github.com/kadena-io/reth", branch = "kadena-chains" }
+reth-engine-tree = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+
 alloy-primitives = { version = "1.1.0", default-features = false, features = ["map-foldhash"] }
 
 alloy-genesis = { version = "1.0.9", default-features = false }
@@ -32,4 +42,3 @@ sha2 = { version = "0.10", default-features = false }
 serde = { version = "1.0", default-features = false }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 once_cell = { version = "1.19", default-features = false, features = ["critical-section"] }
-

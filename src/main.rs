@@ -4,7 +4,7 @@
 static ALLOC: reth_cli_util::allocator::Allocator = reth_cli_util::allocator::new_allocator();
 
 use clap::Parser;
-use custom_evm::KadenaExecutorBuilder;
+use custom_evm::{KadenaExecutorBuilder, KadenaPayloadBuilder};
 use reth::{args::RessArgs, cli::Cli};
 use reth_ethereum_cli::chainspec::EthereumChainSpecParser;
 use reth_node_ethereum::{node::EthereumAddOns, EthereumNode};
@@ -26,8 +26,10 @@ fn main() {
             info!(target: "reth::cli", "Launching node");
             let handle = builder
                 .with_types::<EthereumNode>()
-                .with_components(EthereumNode::components()
-                    .executor(KadenaExecutorBuilder::default())
+                .with_components(
+                    EthereumNode::components()
+                        .executor(KadenaExecutorBuilder::default())
+                        .payload(KadenaPayloadBuilder::default())
                 )
                 .with_add_ons(EthereumAddOns::default())
                 .launch_with_debug_capabilities()
@@ -40,4 +42,3 @@ fn main() {
         std::process::exit(1);
     }
 }
-
