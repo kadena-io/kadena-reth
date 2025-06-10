@@ -4,19 +4,23 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-reth = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
-reth-ethereum-cli = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
-reth-node-builder = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
-reth-provider = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
-reth-tracing = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
-reth-node-core = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
-reth-node-api = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
-reth-node-ethereum = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
-reth-evm-ethereum = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
-reth-primitives = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
-reth-chainspec = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
-reth-cli-util = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
-reth-evm = { git = "https://github.com/paradigmxyz/reth", rev = "eaaa22cf39c6b0e74a704e6a5fd25836e30abe37" }
+reth = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-ethereum-cli = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-node-builder = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-provider = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-tracing = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-node-core = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-node-api = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-node-ethereum = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-evm-ethereum = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-primitives = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-chainspec = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-cli-util = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-evm = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-basic-payload-builder = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-ethereum = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-ethereum-payload-builder = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
+reth-payload-builder = { git = "https://github.com/kadena-io/reth", rev = "3d55cda2f8da73bde3bfa46d9486b441d5872514" }
 alloy-primitives = { version = "1.1.0", default-features = false }
 
 alloy-genesis = { version = "0.14.0", default-features = false }
@@ -32,4 +36,3 @@ sha2 = { version = "0.10", default-features = false }
 serde = { version = "1.0", features = ["derive"]}
 serde_json = "1.0"
 once_cell = { version = "1.19", default-features = false, features = ["critical-section"] }
-

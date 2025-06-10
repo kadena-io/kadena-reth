@@ -1,5 +1,5 @@
 use crate::kadena_precompiles::*;
-use reth::revm::{
+use reth::{payload::PayloadBuilderService, revm::{
     context::{
         result::{EVMError, HaltReason}, Context, TxEnv
     },
@@ -9,13 +9,20 @@ use reth::revm::{
     Inspector,
     MainBuilder,
     MainContext
-};
+}, transaction_pool::{PoolTransaction, TransactionPool}};
 use reth_chainspec::ChainSpec;
 use reth_evm::{eth::EthEvmContext, Database, EthEvm, EvmFactory};
 use reth_evm_ethereum::EthEvmConfig;
 use reth_node_api::{FullNodeTypes, NodeTypes};
-use reth_node_builder::{components::ExecutorBuilder, BuilderContext};
+use reth_node_builder::{components::ExecutorBuilder, components::PayloadServiceBuilder, BuilderContext, PayloadBuilderConfig};
 use reth_primitives::EthPrimitives;
+use reth_provider::CanonStateSubscriptions;
+use reth_node_ethereum::EthEngineTypes;
+use reth_basic_payload_builder::{BasicPayloadJobGenerator, BasicPayloadJobGeneratorConfig};
+use reth_ethereum::TransactionSigned;
+use reth_ethereum_payload_builder::{EthereumBuilderConfig};
+use reth_payload_builder::{PayloadBuilderHandle};
+
 
 /// Custom EVM configuration
 #[derive(Debug, Clone, Default)]
@@ -64,7 +71,7 @@ pub struct KadenaExecutorBuilder;
 
 impl<Node> ExecutorBuilder<Node> for KadenaExecutorBuilder
 where
-    Node: FullNodeTypes<Types: NodeTypes<ChainSpec = ChainSpec, Primitives = EthPrimitives>>,
+    Node: FullNodeTypes<Types: NodeTypes<Payload = EthEngineTypes, ChainSpec = ChainSpec, Primitives = EthPrimitives>>,
 {
     type EVM = EthEvmConfig<KadenaEvmFactory>;
     async fn build_evm(self, ctx: &BuilderContext<Node>) -> eyre::Result<Self::EVM> {
@@ -73,3 +80,56 @@ where
     }
 }
 
+#[derive(Debug, Default, Clone, Copy)]
+#[non_exhaustive]
+pub struct KadenaPayloadBuilder;
+impl<Node, Pool> PayloadServiceBuilder<Node, Pool, EthEvmConfig<KadenaEvmFactory>> for KadenaPayloadBuilder
+where
+    Node: FullNodeTypes<
+        Types: NodeTypes<
+            Payload = EthEngineTypes,
+            ChainSpec = ChainSpec,
+            Primitives = EthPrimitives,
+        >,
+    >,
+    Pool: TransactionPool<Transaction: PoolTransaction<Consensus = TransactionSigned>>
+        + Unpin
+        + 'static,
+{
+    async fn spawn_payload_builder_service(
+        self,
+        ctx: &BuilderContext<Node>,
+        pool: Pool,
+        evm_config: EthEvmConfig<KadenaEvmFactory>,
+    ) -> eyre::Result<PayloadBuilderHandle<<Node::Types as NodeTypes>::Payload>> {
+
+        let payload_builder = reth_ethereum_payload_builder::EthereumPayloadBuilder::new(
+            ctx.provider().clone(),
+            pool,
+            evm_config,
+            EthereumBuilderConfig::new(),
+        );
+
+        let conf = ctx.payload_builder_config();
+
+        let payload_job_config = BasicPayloadJobGeneratorConfig::default()
+            .interval(conf.interval())
+            .nodeadline()
+            .keep_payload_jobs_alive();
+
+        let payload_generator = BasicPayloadJobGenerator::with_builder(
+            ctx.provider().clone(),
+            ctx.task_executor().clone(),
+            payload_job_config,
+            payload_builder,
+        );
+
+        let (payload_service, payload_builder) =
+            PayloadBuilderService::new(payload_generator, ctx.provider().canonical_state_stream(), conf.max_payload_tasks());
+
+        ctx.task_executor()
+            .spawn_critical("custom payload builder service", Box::pin(payload_service));
+
+        Ok(payload_builder)
+    }
+}
