@@ -4,7 +4,8 @@ use reth::revm::precompile::{PrecompileError, PrecompileOutput, PrecompileResult
 use reth_tracing::tracing::debug;
 use serde::{Deserialize, Serialize};
 
-pub const BURN_XCHAIN_ADDR: Address = address!("0000000000000000000000000000000000000421");
+// Keccak256("/Chainweb/KIP-34/VERIFY/SVP/")
+pub const BURN_XCHAIN_ADDR: Address = address!("48c3b4d2757447601776837b6a85f31ef88a87bf");
 pub const BURN_XCHAIN_EVENT: FixedBytes<32> =
     b256!("a8a9f5b5396df0df430f98612e808d453d59dff13ad5aed824dce438df3ddcf0");
 
