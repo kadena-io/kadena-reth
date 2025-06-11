@@ -6,8 +6,17 @@ env:
   REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/kadena-reth
 
 jobs:
-  dockerfile:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - platform: amd64
+            runner: ubuntu-24.04
+          - platform: arm64
+            runner: ubuntu-24.04-arm
+    env:
+      PLATFORM: ${{ matrix.platform }}
     steps:
       - name: Create Docker file
         run: |
@@ -74,25 +83,7 @@ jobs:
           EXPOSE 30303 30303/udp 9001 8545 8546
           ENTRYPOINT ["/app/kadena-reth"]
           DEOF
-      - name: Upload dockerfile
-        uses: actions/upload-artifact@v4
-        with:
-          name: dockerfile
-          path: Dockerfile
-          if-no-files-found: error
-          retention-days: 1
 
-  build-amd64:
-    runs-on: ubuntu-24.04
-    needs: [dockerfile]
-    env:
-      PLATFORM: amd64
-    steps:
-      - name: Download dockerfile
-        uses: actions/download-artifact@v4
-        with:
-          name: dockerfile
-          path: ${{ runner.temp }}
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -110,55 +101,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v6
         with:
-          file: ${{ runner.temp }}/Dockerfile
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          tags: ${{ env.REGISTRY_IMAGE }}
-          labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,push-by-digest=true,name-canonical=true,push=true
-          platforms: linux/${{ env.PLATFORM }}
-      - name: Export digest
-        run: |
-          mkdir -p ${{ runner.temp }}/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "${{ runner.temp }}/digests/${digest#sha256:}"
-      - name: Upload digest
-        uses: actions/upload-artifact@v4
-        with:
-          name: digests-linux-${{ env.PLATFORM }}
-          path: ${{ runner.temp }}/digests/*
-          if-no-files-found: error
-          retention-days: 1
-
-  build-arm64:
-    runs-on: ubuntu-24.04-arm
-    needs: [dockerfile]
-    env:
-      PLATFORM: arm64
-    steps:
-      - name: Download dockerfile
-        uses: actions/download-artifact@v4
-        with:
-          name: dockerfile
-          path: ${{ runner.temp }}
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY_IMAGE }}
-      - name: Build and push
-        id: build
-        uses: docker/build-push-action@v6
-        with:
-          file: ${{ runner.temp }}/Dockerfile
+          file: ./Dockerfile
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: ${{ env.REGISTRY_IMAGE }}
@@ -180,7 +123,7 @@ jobs:
 
   build-multiarch:
     runs-on: ubuntu-24.04
-    needs: [build-amd64, build-arm64]
+    needs: [build]
     steps:
       - name: Download digests
         uses: actions/download-artifact@v4
