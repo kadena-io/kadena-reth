@@ -1,6 +1,6 @@
-use alloy_primitives::{address, Address, Bytes};
+use alloy_primitives::{address, Address};
 
-use reth::revm::precompile::{PrecompileError, PrecompileOutput, PrecompileResult, PrecompileWithAddress};
+use reth::revm::precompile::{PrecompileError, PrecompileOutput, PrecompileWithAddress};
 use sha2::Digest;
 
 pub const SHA512_256_ADDR: Address = address!("0000000000000000000000000000000000000420");
@@ -12,7 +12,7 @@ pub fn calc_linear_cost_u32(len: usize, base: u64, word: u64) -> u64 {
 }
 
 /// Computes the SHA-512 hash of the input data.
-pub fn sha512_run(input: &Bytes, gas_limit: u64) -> PrecompileResult {
+pub fn sha512_run(input: &[u8], gas_limit: u64) -> Result<PrecompileOutput, PrecompileError> {
     let cost = calc_linear_cost_u32(input.len(), 60, 12);
     if cost > gas_limit {
         Err(PrecompileError::OutOfGas.into())

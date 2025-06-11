@@ -7,11 +7,12 @@ use reth::revm::{
     precompile::Precompiles,
     primitives::hardfork::SpecId,
 };
+use reth_evm::precompiles::PrecompilesMap;
 
 use super::{BURN_XCHAIN_ADDR, BURN_XCHAIN_PRECOMPILE, SHA512_256_ADDR, SHA512_PRECOMPILE};
 
 pub struct KadenaPrecompiles {
-    eth_precompiles: EthPrecompiles,
+    pub eth_precompiles: EthPrecompiles,
 }
 
 impl KadenaPrecompiles {
@@ -21,9 +22,7 @@ impl KadenaPrecompiles {
             precompiles: KadenaPrecompiles::kadena_precompiles(),
             spec,
         };
-        Self {
-            eth_precompiles: eth_precompiles,
-        }
+        Self { eth_precompiles, }
     }
 
     fn kadena_precompiles() -> &'static Precompiles {
@@ -33,6 +32,10 @@ impl KadenaPrecompiles {
             precompiles.extend([SHA512_PRECOMPILE, BURN_XCHAIN_PRECOMPILE]);
             Box::new(precompiles)
         })
+    }
+
+    pub fn precompiles_map(&self) -> PrecompilesMap {
+        PrecompilesMap::from_static(self.eth_precompiles.precompiles)
     }
 }
 
