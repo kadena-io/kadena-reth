@@ -4224,11 +4224,15 @@ dependencies = [
 name = "kadena-reth"
 version = "0.1.0"
 dependencies = [
+ "alloy-genesis",
  "alloy-primitives",
+ "alloy-rpc-client",
+ "alloy-rpc-types",
  "alloy-sol-types",
  "clap",
  "eyre",
  "once_cell",
+ "reqwest",
  "reth",
  "reth-basic-payload-builder",
  "reth-chainspec",
@@ -4249,6 +4253,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2 0.10.9",
+ "tokio",
  "tracing",
 ]
 

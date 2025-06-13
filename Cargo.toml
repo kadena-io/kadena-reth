@@ -23,8 +23,6 @@ reth-basic-payload-builder = { git = "https://github.com/kadena-io/reth", rev = 
 reth-payload-builder = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
 
 # temporary
-reth-engine-tree = { git = "https://github.com/kadena-io/reth", branch = "kadena-chains" }
-reth-ethereum-payload-builder = { git = "https://github.com/kadena-io/reth", branch = "kadena-chains" }
 reth-engine-tree = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
 
 alloy-primitives = { version = "1.1.0", default-features = false, features = ["map-foldhash"] }
