@@ -34,7 +34,7 @@ RUN <<EOF
         pkg-config
 EOF
 
-RUN echo "ping"
+# RUN echo "pong" > /tmp/pong
 
 # Rust Toolchain
 ENV PATH="${PATH}:/root/.cargo/bin"
