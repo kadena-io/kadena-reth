@@ -5802,7 +5802,7 @@ dependencies = [
 [[package]]
 name = "reth"
 version = "1.4.4"
-source = "git+https://github.com/kadena-io/reth?branch=kadena-chains#bf055c331ba8f1cbc5e05e8d46aeb03945df6ea7"
+source = "git+https://github.com/kadena-io/reth?branch=kadena-chains#22d5dda19cdbb0cdc7da201ce6d2acd08f5d15c8"
 dependencies = [
  "alloy-rpc-types",
  "aquamarine",
