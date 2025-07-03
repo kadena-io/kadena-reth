@@ -52,4 +52,4 @@ serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 once_cell = { version = "1.19", default-features = false, features = ["critical-section"] }
 
 [patch.crates-io]
-alloy-chains = { git = "https://github.com/kadena-io/alloy-rs-chains", branch = "kadena-chains", default-features = false }
+alloy-chains = { git = "https://github.com/kadena-io/alloy-rs-chains", branch = "kadena-chains-0.2.4", default-features = false }
