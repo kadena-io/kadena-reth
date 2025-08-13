@@ -4,26 +4,26 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-reth = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-chainspec = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-cli-util = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-ethereum = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-ethereum-cli = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-evm = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-evm-ethereum = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-node-api = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-node-builder = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-# reth-node-core = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-node-ethereum = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-primitives = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-provider = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-tracing = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-ethereum-payload-builder = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-basic-payload-builder = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
-reth-payload-builder = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-chainspec = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-cli-util = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-ethereum = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-ethereum-cli = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-evm = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-evm-ethereum = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-node-api = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-node-builder = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+# reth-node-core = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-node-ethereum = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-primitives = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-provider = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-tracing = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-ethereum-payload-builder = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-basic-payload-builder = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
+reth-payload-builder = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
 
 # temporary
-reth-engine-tree = { git = "https://github.com/kadena-io/reth", rev = "6b8aa79e8b61c9d5ae256dfc851912992730ad15" }
+reth-engine-tree = { git = "https://github.com/kadena-io/reth", rev = "9137c869c0bc74dd812395062d88fbd170b787d9" }
 
 alloy-primitives = { version = "1.1.0", default-features = false, features = ["map-foldhash"] }
 
@@ -40,3 +40,6 @@ sha2 = { version = "0.10", default-features = false }
 serde = { version = "1.0", default-features = false }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
 once_cell = { version = "1.19", default-features = false, features = ["critical-section"] }
+
+[patch.crates-io]
+alloy-chains = { git = "https://github.com/kadena-io/alloy-rs-chains", branch = "kadena-chains", default-features = false }
