@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::kadena_precompiles::*;
 use reth::{payload::PayloadBuilderService, providers::CanonStateSubscriptions, revm::{
     context::{
@@ -73,6 +75,7 @@ where
 {
     type EVM = EthEvmConfig<KadenaEvmFactory>;
     async fn build_evm(self, ctx: &BuilderContext<Node>) -> eyre::Result<Self::EVM> {
+        let cs = ctx.chain_spec();
         let evm_config = EthEvmConfig::new_with_evm_factory(ctx.chain_spec(), KadenaEvmFactory::default());
         Ok(evm_config)
     }
@@ -111,9 +114,8 @@ where
         let conf = ctx.payload_builder_config();
 
         let payload_job_config = BasicPayloadJobGeneratorConfig::default()
-            .interval(conf.interval())
-            .nodeadline()
-            .keep_payload_jobs_alive();
+            .max_payload_tasks(conf.max_payload_tasks())
+            .deadline(Duration::MAX);
 
         let payload_generator = BasicPayloadJobGenerator::with_builder(
             ctx.provider().clone(),
@@ -123,10 +125,11 @@ where
         );
 
         let (payload_service, payload_builder) =
-            PayloadBuilderService::new(payload_generator, ctx.provider().canonical_state_stream(), conf.max_payload_tasks());
+            PayloadBuilderService::new(payload_generator, ctx.provider().canonical_state_stream());
 
         ctx.task_executor()
             .spawn_critical("custom payload builder service", Box::pin(payload_service));
+
 
         Ok(payload_builder)
     }

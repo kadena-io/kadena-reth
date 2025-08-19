@@ -28,7 +28,7 @@ fn main() {
                 .with_types::<EthereumNode>()
                 .with_components(
                     EthereumNode::components()
-                        .executor(KadenaExecutorBuilder::default())
+                        .executor(KadenaExecutorBuilder::default() )
                         .payload(KadenaPayloadBuilder::default())
                 )
                 .with_add_ons(EthereumAddOns::default())
