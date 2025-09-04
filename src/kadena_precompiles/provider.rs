@@ -9,7 +9,9 @@ use reth::revm::{
 };
 use reth_evm::precompiles::PrecompilesMap;
 
-use super::{SHA512_256_ADDR, SHA512_PRECOMPILE};
+use crate::kadena_precompiles::Sha512Precompile;
+
+use super::{SHA512_256_ADDR};
 
 pub struct KadenaPrecompiles {
     pub eth_precompiles: EthPrecompiles,
@@ -18,7 +20,7 @@ pub struct KadenaPrecompiles {
 impl KadenaPrecompiles {
     pub fn new() -> Self {
         let spec = SpecId::default();
-        let eth_precompiles = EthPrecompiles {
+        let eth_precompiles = EthPrecompiles { 
             precompiles: KadenaPrecompiles::kadena_precompiles(),
             spec,
         };
@@ -29,7 +31,7 @@ impl KadenaPrecompiles {
         static INSTANCE: OnceBox<Precompiles> = OnceBox::new();
         INSTANCE.get_or_init(|| {
             let mut precompiles = Precompiles::prague().clone();
-            precompiles.extend([SHA512_PRECOMPILE]);
+            precompiles.extend([Sha512Precompile::precompile()]);
             Box::new(precompiles)
         })
     }
