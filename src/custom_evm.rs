@@ -115,7 +115,7 @@ where
         let payload_job_config = BasicPayloadJobGeneratorConfig::default()
             .interval(conf.interval())
             .deadline(Duration::MAX)
-            .max_payload_tasks(conf.max_payload_tasks());
+            .keep_payload_jobs_alive();
 
         let payload_generator = BasicPayloadJobGenerator::with_builder(
             ctx.provider().clone(),
@@ -125,7 +125,7 @@ where
         );
 
         let (payload_service, payload_builder) =
-            PayloadBuilderService::new(payload_generator, ctx.provider().canonical_state_stream());
+            PayloadBuilderService::new(payload_generator, ctx.provider().canonical_state_stream(), conf.max_payload_tasks());
 
         ctx.task_executor()
             .spawn_critical("custom payload builder service", Box::pin(payload_service));
