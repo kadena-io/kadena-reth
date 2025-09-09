@@ -1,11 +1,19 @@
 use alloy_primitives::{address, Address};
 
-use reth::revm::precompile::{PrecompileError, PrecompileOutput, PrecompileWithAddress};
+use reth::revm::precompile::{Precompile, PrecompileError, PrecompileId, PrecompileOutput};
 use sha2::Digest;
 
 pub const SHA512_256_ADDR: Address = address!("0000000000000000000000000000000000000420");
 
-pub const SHA512_PRECOMPILE: PrecompileWithAddress = PrecompileWithAddress (SHA512_256_ADDR, sha512_run);
+pub const SHA512_PRECOMPILE_ID_NAME: &'static str = "sha512_256";
+
+pub struct Sha512Precompile;
+
+impl Sha512Precompile {
+    pub fn precompile() -> Precompile {
+        Precompile::new (PrecompileId::custom(SHA512_PRECOMPILE_ID_NAME),SHA512_256_ADDR, sha512_run)
+    }
+}
 
 pub fn calc_linear_cost_u32(len: usize, base: u64, word: u64) -> u64 {
     (len as u64 + 32 - 1) / 32 * word + base
