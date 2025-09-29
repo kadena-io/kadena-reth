@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use crate::kadena_precompiles::*;
 use reth::{payload::PayloadBuilderService, providers::CanonStateSubscriptions, revm::{
     context::{
@@ -71,7 +73,7 @@ impl<Node> ExecutorBuilder<Node> for KadenaExecutorBuilder
 where
     Node: FullNodeTypes<Types: NodeTypes<Payload = EthEngineTypes, ChainSpec = ChainSpec, Primitives = EthPrimitives>>,
 {
-    type EVM = EthEvmConfig<KadenaEvmFactory>;
+    type EVM = EthEvmConfig<ChainSpec, KadenaEvmFactory>;
     async fn build_evm(self, ctx: &BuilderContext<Node>) -> eyre::Result<Self::EVM> {
         let evm_config = EthEvmConfig::new_with_evm_factory(ctx.chain_spec(), KadenaEvmFactory::default());
         Ok(evm_config)
@@ -81,7 +83,7 @@ where
 #[derive(Debug, Default, Clone, Copy)]
 #[non_exhaustive]
 pub struct KadenaPayloadBuilder;
-impl<Node, Pool> PayloadServiceBuilder<Node, Pool, EthEvmConfig<KadenaEvmFactory>> for KadenaPayloadBuilder
+impl<Node, Pool> PayloadServiceBuilder<Node, Pool, EthEvmConfig<ChainSpec, KadenaEvmFactory>> for KadenaPayloadBuilder
 where
     Node: FullNodeTypes<
         Types: NodeTypes<
@@ -98,7 +100,7 @@ where
         self,
         ctx: &BuilderContext<Node>,
         pool: Pool,
-        evm_config: EthEvmConfig<KadenaEvmFactory>,
+        evm_config: EthEvmConfig<ChainSpec, KadenaEvmFactory>,
     ) -> eyre::Result<PayloadBuilderHandle<<Node::Types as NodeTypes>::Payload>> {
 
         let payload_builder = reth_ethereum_payload_builder::EthereumPayloadBuilder::new(
@@ -112,7 +114,7 @@ where
 
         let payload_job_config = BasicPayloadJobGeneratorConfig::default()
             .interval(conf.interval())
-            .nodeadline()
+            .deadline(Duration::MAX)
             .keep_payload_jobs_alive();
 
         let payload_generator = BasicPayloadJobGenerator::with_builder(
