@@ -114,8 +114,8 @@ where
 
         let payload_job_config = BasicPayloadJobGeneratorConfig::default()
             .interval(conf.interval())
-            .deadline(Duration::MAX)
-            .keep_payload_jobs_alive();
+            .keep_payload_jobs_alive()
+            .nodeadline();
 
         let payload_generator = BasicPayloadJobGenerator::with_builder(
             ctx.provider().clone(),
